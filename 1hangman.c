@@ -1,64 +1,132 @@
-//hangman
-#include<stdio.h>
-#include<stdlib.h>
-#include<time.h>
-#include<string.h>
-#define words 5
+//hangman  w=wrong
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+
+#define WORDS 5
 
 void lives(int);
-void game(char [20],char [100]);
-void dis_guess(char [6]);
-char search(char,char [20],int);
-int main()
+void game(char*, char*);
+int search(char, char*, char*, int);
+
+int main() 
 {
-	char word[words][20]={"Suyash","Samyog","Sandeep","Dikchhya","Amina"};
-	char hint[words][100]={"Roll no. 19","Roll no. 14","Roll no. 15","Roll no. 4","Roll no. 1"};
-	srand(time(NULL));
-	int index=rand()%words;
-	game(word[index],hint[index]);
+	int index;
+    char *word[WORDS] = {"Suyash", "Samyog", "Sandeep", "Dikchhya", "Dinesh"};
+    char *hint[WORDS] = {"Roll no. 19", "Roll no. 14", "Roll no. 15", "Roll no. 4", "C Teacher"};
+    srand(time(NULL));
+    index = rand() % WORDS;
+    game(word[index], hint[index]);
+    return 0;
 }
-void game(char word[20],char hint[100])
-{
-	int i,len,life=6;
-	char ch,guess[6];
-	len=strlen(word);
-	printf("Your word is:\n");
-	for(i=0;i<len;i++)
-		printf("_ ");
-	printf("\nHint: %s\n",hint);
-	
-	do
-	{
-		printf("Enter your guess: ");
-		scanf("%c",&ch);
-		for(i=0;i<len;i++)
-		{
-			guess[6-life]=search(ch,word,life);
-		}
-		dis_guess(guess);
-	}while(life!=0);
+
+void game(char *word, char *hint) {
+    int i, len, life = 6, w = 0;
+    char ch, guess[26] = {0};
+    char display[20] = {0};
+    len = strlen(word);
+
+    for (i = 0; i < len; i++) {
+        display[i] = '_';
+    }
+    display[len] = '\0';
+
+    printf("Hint: %s (1st letter is capital)\n", hint);
+    
+    do {
+        lives(life);
+        printf("Your word is: ");
+        for (i = 0; i < len; i++) {
+            printf("%c ", display[i]);
+        }
+        printf("\nEnter your guess: ");
+        scanf("%c", &ch);
+
+        if (strchr(guess, ch) != NULL) {
+            printf("Already Guessed!\n");
+            continue;
+        }
+
+        guess[w] = ch;
+        w++;
+        
+        int found;
+        found = search(ch, word, display, len);
+		if (found == 0){
+            life--;
+        }
+
+    } while (life > 0 && strchr(display, '_') != NULL);
+
+    if (life > 0) {
+        printf("Congratulations! You've guessed the word: %s\n", word);
+    } else {
+        printf("You've run out of lives. The word was: %s\n", word);
+    }
 }
-void dis_guess(char guess[6])
-{
-	int i;
-	for(i=0;i<6;i++)
-		printf("%c ",guess[i]);
+
+int search(char ch, char *word, char *display, int len) {
+    int i, found = 0;
+    for (i = 0; i < len; i++) {
+        if (word[i] == ch) {
+            display[i] = ch;
+            found = 1;
+        }
+    }
+    if (found) {
+        printf("Correct Guess\n");
+    } else {
+        printf("Wrong Guess\n");
+    }
+    return found;
 }
-char search(char ch,char word[20],int life)
-{
-	int len=strlen(word),i;
-	for(i=0;i<len;i++)
-		if(word[i]==ch)
-			break;
-	if(i<len)
-	{
-		printf("Correct Guess\n");
-		return (ch); 
-	}
-	else
-		{
-			printf("Wrong Guess\n");
-			life--;
-			return(ch);
-		}
+
+void lives(int life) {
+    switch (life) {
+        case 6:
+            printf("-----\n");
+            printf("|    \n");
+            printf("|    \n");
+            printf("|    \n");
+            break;
+        case 5:
+            printf("-----\n");
+            printf("|   O \n");
+            printf("|    \n");
+            printf("|    \n");
+            break;
+        case 4:
+            printf("-----\n");
+            printf("|   O \n");
+            printf("|   | \n");
+            printf("|    \n");
+            break;
+        case 3:
+            printf("-----\n");
+            printf("|   O \n");
+            printf("|  /| \n");
+            printf("|    \n");
+            break;
+        case 2:
+            printf("-----\n");
+            printf("|   O \n");
+            printf("|  /|\\ \n");
+            printf("|    \n");
+            break;
+        case 1:
+            printf("-----\n");
+            printf("|   O \n");
+            printf("|  /|\\ \n");
+            printf("|  /  \n");
+            break;
+        case 0:
+            printf("-----\n");
+            printf("|   O \n");
+            printf("|  /|\\ \n");
+            printf("|  / \\ \n");
+            break;
+        default:
+            printf("ERROR?\n");
+    }
 }
