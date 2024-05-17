@@ -41,7 +41,7 @@ void game(char *word, char *hint) {
             printf("%c ", display[i]);
         }
         printf("\nEnter your guess: ");
-        scanf("%c", &ch);
+        scanf(" %c", &ch);
 
         if (strchr(guess, ch) != NULL) {
             printf("Already Guessed!\n");
