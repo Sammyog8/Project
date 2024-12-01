@@ -113,7 +113,14 @@ int main() {
             m.revealbombs(opened);
         } else {
             int bomb_count = m.countbombs(grid1, grid2);
-            opened[grid1][grid2] = bomb_count + '0';
+            if (bomb_count == 0)
+            {
+            	opened[grid1][grid2] = 0;
+			}
+			else
+			{
+            	opened[grid1][grid2] = bomb_count + '0';
+			}
         }
     }
 
